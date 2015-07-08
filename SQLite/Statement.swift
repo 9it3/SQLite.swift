@@ -22,6 +22,8 @@
 // THE SOFTWARE.
 //
 
+import sqlcipher
+
 internal let SQLITE_STATIC = sqlite3_destructor_type(COpaquePointer(bitPattern: 0))
 internal let SQLITE_TRANSIENT = sqlite3_destructor_type(COpaquePointer(bitPattern: -1))
 

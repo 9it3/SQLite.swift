@@ -22,6 +22,8 @@
 // THE SOFTWARE.
 //
 
+import sqlcipher
+
 public func fts4(columns: Expression<String>...) -> Expression<Void> {
     return fts4(columns)
 }

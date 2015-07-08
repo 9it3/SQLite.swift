@@ -22,6 +22,8 @@
 // THE SOFTWARE.
 //
 
+import sqlcipher
+
 /// A connection (handle) to SQLite.
 public final class Database {
 

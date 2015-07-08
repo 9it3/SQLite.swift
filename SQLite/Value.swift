@@ -49,7 +49,7 @@ public protocol Value {
 
 public struct Blob {
 
-    private let data: NSData
+    internal let data: NSData
 
     public var bytes: UnsafePointer<Void> {
         return data.bytes
@@ -63,6 +63,9 @@ public struct Blob {
         data = NSData(bytes: bytes, length: length)
     }
 
+    public init(data: NSData) {
+        self.data = data
+    }
 }
 
 extension Blob: Equatable {}
