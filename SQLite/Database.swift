@@ -129,6 +129,18 @@ public final class Database {
         if !bindings.isEmpty { return prepare(statement, bindings) }
         return Statement(self, statement)
     }
+    
+    var cachedStatements: [String : Statement] = [:]
+    
+    public func prepareCached(statement: String) -> Statement {
+        if let cached = self.cachedStatements[statement] {
+            return cached
+        } else {
+            let cached = Statement(self, statement)
+            self.cachedStatements[statement] = cached
+            return cached
+        }
+    }
 
     /// Prepares a single SQL statement and binds parameters to it.
     ///
