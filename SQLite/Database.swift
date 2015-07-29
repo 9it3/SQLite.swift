@@ -115,6 +115,14 @@ public final class Database {
     public func execute(SQL: String) {
         `try` { sqlite3_exec(self.handle, SQL, nil, nil, nil) }
     }
+    
+    public func adjustChunkSize() {
+        `try` {
+            var value: Int32 = 1 * 1024 * 1024
+            sqlite3_file_control(self.handle, nil, SQLITE_FCNTL_CHUNK_SIZE, &value)
+            return SQLITE_OK
+        }
+    }
 
     // MARK: - Prepare
 
@@ -605,7 +613,8 @@ public final class Database {
 
     /// Returns the last error produced on this connection.
     public var lastError: String? {
-        if successCodes.contains(sqlite3_errcode(handle)) {
+        let errorCode = sqlite3_errcode(handle)
+        if errorCode == SQLITE_OK || errorCode == SQLITE_ROW || errorCode == SQLITE_DONE {
             return nil
         }
         return String.fromCString(sqlite3_errmsg(handle))!
@@ -617,9 +626,9 @@ public final class Database {
 
     // MARK: - Threading
 
-    private let queue = dispatch_queue_create("SQLite.Database", DISPATCH_QUEUE_SERIAL)
+    //private let queue = dispatch_queue_create("SQLite.Database", DISPATCH_QUEUE_SERIAL)
 
-    internal func perform(block: () -> Void) { dispatch_sync(queue, block) }
+    internal func perform(block: () -> Void) { block() /*dispatch_sync(queue, block)*/ }
 
 }
 
@@ -646,8 +655,6 @@ extension Database.Location: CustomStringConvertible {
     }
 
 }
-
-internal let successCodes: Set<Int32> = [SQLITE_OK, SQLITE_ROW, SQLITE_DONE]
 
 internal func quote(literal literal: String) -> String {
     return quote(literal, mark: "'")
