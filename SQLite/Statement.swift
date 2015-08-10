@@ -33,12 +33,14 @@ public final class Statement {
     private var handle: COpaquePointer = nil
 
     private let database: Database
+    //private let SQL: String
 
     /// A cursor pointing to the current row.
     public lazy var row: Cursor = Cursor(self)
 
     internal init(_ database: Database, _ SQL: String) {
         self.database = database
+        //self.SQL = SQL
         database.`try` { sqlite3_prepare_v2(database.handle, SQL, -1, &self.handle, nil) }
     }
 
@@ -117,6 +119,7 @@ public final class Statement {
     /// - returns: The statement object (useful for chaining).
     public func run(bindings: Binding?...) -> Statement {
         if !bindings.isEmpty { return run(bindings) }
+        //print("\(SQL)")
         reset(false)
         while step() {}
         return self

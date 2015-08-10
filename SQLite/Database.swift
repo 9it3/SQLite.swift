@@ -141,13 +141,39 @@ public final class Database {
     var cachedStatements: [String : Statement] = [:]
     
     public func prepareCached(statement: String) -> Statement {
-        if let cached = self.cachedStatements[statement] {
+        //print("\(statement) -> \n\(self.explain(statement))")
+        return Statement(self, statement)
+    
+        /*if let cached = self.cachedStatements[statement] {
             return cached
         } else {
             let cached = Statement(self, statement)
             self.cachedStatements[statement] = cached
             return cached
+        }*/
+    }
+    
+    public func explain(statement: String) -> String {
+        var result = ""
+        var first = true
+        for row in self.prepare("EXPLAIN QUERY PLAN \(statement)").run() {
+            if first {
+                first = false
+            } else {
+                result += "\n"
+            }
+            
+            var firstField = true
+            for field in row {
+                if firstField {
+                    firstField = false
+                } else {
+                    result += ", "
+                }
+                result += "\(field ?? 0)"
+            }
         }
+        return result
     }
 
     /// Prepares a single SQL statement and binds parameters to it.
@@ -630,6 +656,9 @@ public final class Database {
 
     internal func perform(block: () -> Void) { block() /*dispatch_sync(queue, block)*/ }
 
+    public func telegram_updateState() {
+        
+    }
 }
 
 // MARK: - Printable
