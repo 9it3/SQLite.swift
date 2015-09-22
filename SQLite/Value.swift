@@ -91,9 +91,13 @@ extension Blob: Binding, Value {
 extension Blob: CustomStringConvertible {
 
     public var description: String {
-        let buf = UnsafeBufferPointer(start: UnsafePointer<UInt8>(bytes), count: length)
-        let hex = "".join(buf.map { String(format: "%02x", $0) })
-        return "x'\(hex)'"
+        var string = "x'"
+        let buffer = UnsafePointer<UInt8>(bytes)
+        for i in 0 ..< length {
+            string += String(format: "%02x", buffer[i])
+        }
+        string += "'"
+        return string
     }
 
 }
