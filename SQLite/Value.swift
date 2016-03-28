@@ -35,9 +35,9 @@ public protocol Number: Binding {}
 
 public protocol Value {
 
-    typealias ValueType = Self
+    associatedtype ValueType = Self
 
-    typealias Datatype: Binding
+    associatedtype Datatype: Binding
 
     static var declaredDatatype: String { get }
 

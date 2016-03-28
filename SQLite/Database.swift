@@ -308,7 +308,7 @@ public final class Database {
     ///              Default: `.Deferred`
     ///
     /// - returns: The BEGIN TRANSACTION statement.
-    public func transaction(_ mode: TransactionMode = .Deferred) -> Statement {
+    public func transaction(mode: TransactionMode = .Deferred) -> Statement {
         return run("BEGIN \(mode.rawValue) TRANSACTION")
     }
 
@@ -324,7 +324,7 @@ public final class Database {
     ///               failure.
     ///
     /// - returns: The COMMIT or ROLLBACK statement.
-    public func transaction(_ mode: TransactionMode = .Deferred, @noescape _ block: (txn: Statement) -> TransactionResult) -> Statement {
+    public func transaction(mode: TransactionMode = .Deferred, @noescape _ block: (txn: Statement) -> TransactionResult) -> Statement {
         return run(block(txn: transaction(mode)).rawValue)
     }
 
@@ -383,7 +383,7 @@ public final class Database {
     /// - parameter savepointName: A unique identifier for the savepoint.
     ///
     /// - returns: The SAVEPOINT statement.
-    public func savepoint(_ savepointName: String? = nil) -> Statement {
+    public func savepoint(savepointName: String? = nil) -> Statement {
         let name = savepointName ?? NSUUID().UUIDString
         savepointStack.append(name)
         return run("SAVEPOINT \(quote(literal: name))")
@@ -399,7 +399,7 @@ public final class Database {
     ///                       depending on success or failure.
     ///
     /// - returns: The RELEASE or ROLLBACK statement.
-    public func savepoint(_ savepointName: String? = nil, @noescape _ block: (txn: Statement) -> SavepointResult) -> Statement {
+    public func savepoint(savepointName: String? = nil, @noescape _ block: (txn: Statement) -> SavepointResult) -> Statement {
         switch block(txn: savepoint(savepointName)) {
         case .Release:
             return release()
@@ -414,7 +414,7 @@ public final class Database {
     /// - parameter savepointName: A unique identifier for the savepoint (optional).
     ///
     /// - returns: The RELEASE SAVEPOINT statement.
-    public func release(_ savepointName: String? = nil) -> Statement {
+    public func release(savepointName: String? = nil) -> Statement {
         let name = savepointName ?? savepointStack.removeLast()
         if let idx = savepointStack.indexOf(name) { savepointStack.removeRange(idx..<savepointStack.count) }
         return run("RELEASE SAVEPOINT \(quote(literal: name))")

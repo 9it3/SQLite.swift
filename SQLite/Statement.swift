@@ -310,7 +310,7 @@ extension Cursor: SequenceType {
 
     public func generate() -> AnyGenerator<Binding?> {
         var idx = 0
-        return anyGenerator {
+        return AnyGenerator {
             idx >= self.columnCount ? Optional<Binding?>.None : self[idx++]
         }
     }
