@@ -49,7 +49,7 @@ public final class Database {
 
     }
 
-    internal var handle: COpaquePointer = nil
+    internal var handle: OpaquePointer? = nil
 
     /// Whether or not the database was opened in a read-only state.
     public var readonly: Bool { return sqlite3_db_readonly(handle, nil) == 1 }
@@ -94,7 +94,7 @@ public final class Database {
     /// Executes a batch of SQL statements.
     ///
     /// - parameter SQL: A batch of zero or more semicolon-separated SQL statements.
-    public func execute(SQL: String) {
+    public func execute(_ SQL: String) {
         sqlite3_exec(self.handle, SQL, nil, nil, nil)
     }
     
@@ -102,15 +102,6 @@ public final class Database {
         var value: Int32 = 1 * 1024 * 1024
         sqlite3_file_control(self.handle, nil, SQLITE_FCNTL_CHUNK_SIZE, &value)
     }
-}
-
-// MARK: - Printable
-extension Database: CustomStringConvertible {
-
-    public var description: String {
-        return String.fromCString(sqlite3_db_filename(handle, nil))!
-    }
-
 }
 
 extension Database.Location: CustomStringConvertible {
